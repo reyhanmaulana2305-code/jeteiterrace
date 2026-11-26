@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Daftar Menu - TERAS JTI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="menu.css">
+</head>
+<body>
+  <header class="navbar">
+    <div class="wadah">
+      <a class="merek" href="index.html">TERAS JTI</a>
+      <nav>
+        <a class="aktif" href="menu.html">Menu</a>
+        <a href="konfirmasi.html">Pesanan Saya</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wadah halaman-menu">
+    <h1>Daftar Menu</h1>
+    <p class="sub">Pilih menu tanpa datang langsung ke kasir</p>
+    <input class="cari" id="cari" type="search" placeholder="Cari menu ..." aria-label="Cari menu">
+    <nav class="filter" aria-label="Kategori menu"><a href="menu.html" class="aktif" aria-current="page">Semua</a><a href="menu-makanan.html">Makanan</a><a href="menu-minuman.html">Minuman</a></nav>
+
+    <section class="daftar">
+      <article class="item">
+        <img src="assets/matcha,jpg.webp" class="foto" alt="matcha">
+        <div class="isi">
+          <div><h2>Matcha</h2><p class="deskripsi">Matcha susu dingin</p></div>
+          <div class="baris"><span class="harga">Rp 19.000</span><button type="button" class="tombol">+ Tambah</button></div>
+        </div>
+
+      </article>
+      <article class="item">
+        <img src="assets/redvelvet.jpg" class="foto" alt="red velvet">
+        <div class="isi">
+          <div><h2>Red Velvet</h2><p class="deskripsi">Red Velvet dingin</p></div>
+          <div class="baris"><span class="harga">Rp 17.000</span><button type="button" class="tombol">+ Tambah</button></div>
+        </div>
+      </article>
+
+      <article class="item">
+        <img src="assets/milkyberry.jpg" class="foto" alt="milky berry">
+        <div class="isi">
+          <div><h2>Milky Berry</h2><p class="deskripsi"></p></div>
+          <div class="baris"><span class="harga">Rp 18.000</span><button type="button" class="tombol">+ Tambah</button></div>
+        </div>
+      </article>
+
+      <article class="item">
+        <img src="assets/nasi telur sambal.jpg" class="foto" alt="nasi telur sambal">
+        <div class="isi">
+          <div><h2>Nasi Telur Sambal</h2><p class="deskripsi">Nasi Dengan Telur dadar Kriwil</p></div>
+          <div class="baris"><span class="harga">Rp 14.000</span><button type="button" class="tombol">+ Tambah</button></div>
+        </div>
+      </article>
+
+      <article class="item">
+        <img src="assets/nasi katsu.jpg" class="foto" alt="nasi katsu">
+        <div class="isi">
+          <div><h2>Nasi Katsu</h2><p class="deskripsi">Nasi dengan ayam katsu dan bumbu teriyaki</p></div>
+          <div class="baris"><span class="harga">Rp 21.000</span><button type="button" class="tombol">+ Tambah</button></div>
+        </div>
+      </article>
+
+      <article class="item">
+        <img src="assets/nasi goreng teras jti.jpg" class="foto" alt= "nais goreng teras jti">
+        <div class="isi">
+          <div><h2>Nasi Goreng Teras JTI</h2><p class="deskripsi">Nasi Goreng denagan telur kribo</p></div>
+          <div class="baris"><span class="harga">Rp 18.000</span><button type="button" class="tombol">+ Tambah</button></div>
+        </div>
+      </article>
+
+    </section>
+  </main>
+
+  <div class="keranjang">
+    <div class="wadah">
+      <div>
+        <span class="ringkas"><span id="jumlah-item">Keranjang: 0 item</span><span id="total-keranjang">Rp 0</span></span>
+        <a class="tombol" href="konfirmasi.html">Lihat Pesanan</a>
+      </div>
+    </div>
+  </div>
+  <script src="js/app.js" defer></script>
+  <script src="js/script.js"></script>
+</body>
+</html>

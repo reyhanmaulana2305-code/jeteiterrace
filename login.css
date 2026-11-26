@@ -1,0 +1,113 @@
+/* ===== login.css : gaya untuk login.html ===== */
+:root {
+  --coklat-tua: #3f1b00;
+  --coklat: #5a2a0a;
+  --coklat-muda: #b08060;
+  --krem: #fff9e6;
+  --latar: #f8fafc;
+  --putih: #ffffff;
+  --teks: #1e293b;
+  --abu: #64748b;
+  --garis: #e2e8f0;
+  --bahaya: #b91c1c;
+  --bahaya-latar: #fef2f2;
+  --radius: 12px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: var(--latar);
+  color: var(--teks);
+  line-height: 1.5;
+}
+
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+
+:focus-visible { outline: 3px solid #f59e0b; outline-offset: 2px; }
+
+.wadah { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+
+/* ----- Navbar ----- */
+.navbar { background: var(--coklat-tua); color: var(--putih); }
+.navbar .wadah {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px;
+}
+.merek { font-size: 20px; font-weight: 700; letter-spacing: .2px; }
+.navbar nav { display: flex; gap: 8px; }
+.navbar nav a {
+  padding: 20px 14px 17px; font-size: 14px; font-weight: 500;
+  border-bottom: 3px solid transparent;
+}
+.navbar nav a.aktif { font-weight: 700; border-bottom-color: var(--putih); }
+.navbar nav a:hover { opacity: .85; }
+
+/* ----- Tombol ----- */
+.tombol {
+  display: inline-block; cursor: pointer; border: 1px solid var(--coklat);
+  background: var(--coklat-tua); color: var(--putih);
+  font: inherit; font-size: 14px; font-weight: 700;
+  padding: 10px 20px; border-radius: 8px; text-align: center;
+}
+.tombol:hover { background: var(--coklat); }
+.tombol-putih { background: var(--putih); color: var(--coklat-tua); border-color: var(--putih); }
+.tombol-putih:hover { background: #f1f5f9; }
+.tombol-garis { background: var(--putih); color: var(--coklat-tua); border-color: var(--coklat-tua); }
+.tombol-garis:hover { background: var(--krem); }
+.tombol-kecil { padding: 7px 14px; font-size: 13px; }
+
+/* ----- Tabel ringkasan (konfirmasi & antrian) ----- */
+.tabel { width: 100%; border-collapse: collapse; font-size: 14px; }
+.tabel th, .tabel td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--garis); }
+.tabel th { font-size: 13px; color: var(--abu); font-weight: 600; background: #f1f5f9; }
+.tabel .angka { text-align: right; white-space: nowrap; }
+.total { text-align: right; font-weight: 700; font-size: 16px; padding: 14px 12px 0; }
+
+/* ----- Footer ----- */
+.footer { background: #111c1c; color: #94a3b8; text-align: center; font-size: 12px; padding: 28px 24px; }
+
+
+/* ===== gaya khusus halaman ===== */
+body.auth { min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; }
+
+.sisi-merek {
+  background: linear-gradient(160deg, #3f1b00, #6b3d1f);
+  color: var(--putih); padding: 48px; display: flex; flex-direction: column; justify-content: center;
+}
+.sisi-merek .merek { font-size: 24px; margin-bottom: 40px; }
+.sisi-merek h1 { font-size: 40px; line-height: 1.15; margin-bottom: 10px; }
+.sisi-merek > p { color: #e8d5c0; margin-bottom: 26px; max-width: 360px; }
+.sisi-merek ul { list-style: none; display: grid; gap: 10px; font-size: 15px; }
+.sisi-merek li::before { content: "✓"; color: #fcd34d; font-weight: 700; margin-right: 10px; }
+
+.sisi-form { display: grid; place-items: center; padding: 32px 24px; }
+.kartu-form {
+  width: 100%; max-width: 400px; background: var(--putih);
+  border: 1px solid var(--garis); border-radius: 16px; padding: 32px;
+}
+.kartu-form h2 { font-size: 24px; margin-bottom: 4px; }
+.kartu-form .sub { font-size: 14px; color: var(--abu); margin-bottom: 24px; }
+
+.bidang { margin-bottom: 16px; }
+.bidang label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.bidang input {
+  width: 100%; font: inherit; font-size: 14px; padding: 11px 12px;
+  border: 1px solid #cbd5e1; border-radius: 8px; background: var(--putih);
+}
+.bidang input:focus { outline: 3px solid #fcd34d; border-color: var(--coklat); }
+.kartu-form .tombol { width: 100%; padding: 12px; margin-top: 4px; }
+
+.alihan { text-align: center; font-size: 14px; color: var(--abu); margin-top: 18px; }
+.alihan a { color: var(--coklat); font-weight: 700; }
+.kembali { display: block; text-align: center; font-size: 13px; margin-top: 22px; color: var(--abu); }
+.kembali:hover { color: var(--coklat); }
+
+@media (max-width: 800px) {
+  body.auth { grid-template-columns: 1fr; }
+  .sisi-merek { padding: 32px 24px; }
+  .sisi-merek h1 { font-size: 30px; }
+  .sisi-merek .merek { margin-bottom: 20px; }
+}

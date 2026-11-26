@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Masuk Pelanggan - TERAS JTI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/login.css">
+</head>
+<body class="auth">
+  <aside class="sisi-merek">
+    <a class="merek" href="index.html">TERAS JTI</a>
+    <h1>Selamat datang.</h1>
+    <p>Masuk untuk memesan menu favorit Anda.</p>
+    <ul>
+      <li>Pesan tanpa antre berdiri</li>
+      <li>Pantau status pesanan lewat nomor antrian</li>
+    </ul>
+  </aside>
+
+  <main class="sisi-form">
+    <div class="kartu-form">
+      <h2>Masuk Pelanggan</h2>
+      <p class="sub">Masuk untuk mulai memesan menu favorit Anda.</p>
+      <form action="menu.html" method="get">
+        <div class="bidang">
+          <label for="email">Email / ID</label>
+          <input type="text" id="email" name="email" placeholder="nama@email.com" required>
+        </div>
+        <div class="bidang">
+          <label for="sandi">Kata sandi</label>
+          <input type="password" id="sandi" name="sandi" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="tombol">Masuk</button>
+      </form>
+      <p class="alihan">Belum punya akun? <a href="registrasi.html">Daftar</a></p>
+      <a class="kembali" href="index.html">Kembali ke Beranda</a>
+    </div>
+  </main>
+  <script src="js/script.js"></script>
+</body>
+</html>
