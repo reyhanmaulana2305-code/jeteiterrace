@@ -45,7 +45,7 @@ img { max-width: 100%; display: block; }
 
 :focus-visible { outline: 3px solid var(--aksen); outline-offset: 2px; }
 
-.wadah { width: 100%; max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+.wadah { width: 100%; max-width: 18  00px; margin: 0 auto; padding: 0 24px; }
 
 /* ----- Navbar ----- */
 .navbar {
