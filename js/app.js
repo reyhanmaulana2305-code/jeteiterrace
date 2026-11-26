@@ -9,7 +9,7 @@
 
 // ===== KUNCI PENYIMPANAN =====
 const KEY = {
-  keranjang: 'teras_keranjang',   // { [nama]: { nama, harga, qty } }
+  keranjang: 'teras_keranjang_v2', // { [nama]: { nama, harga, qty } }
   antrian: 'teras_antrian',       // nomor antrian aktif
   urut: 'teras_antrian_urut',     // counter nomor antrian
   terkirim: 'teras_terkirim',     // data pesanan terakhir (untuk kasir)
@@ -341,8 +341,15 @@ function initPesanan() {
 /* ============================================================
    MULAI sesuai halaman
    ============================================================ */
-document.addEventListener('DOMContentLoaded', () => {
+function mulai() {
   initNavbar();
   if ($('#kirimPesanan')) initPesanan();
   else initMenu();
-});
+}
+
+/* Jalankan saat DOM siap — aman walau script dimuat terlambat (defer/async/cache) */
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', mulai);
+} else {
+  mulai();
+}
