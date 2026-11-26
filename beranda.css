@@ -54,6 +54,10 @@ h3,
     font-family: "Bricolage Grotesque", "Inter", Arial, sans-serif;
 }
 
+img {
+    max-width: 100%;
+}
+
 .wadah {
     width: 90%;
     max-width: 1800px;
@@ -68,6 +72,7 @@ h3,
     top: 0;
     z-index: 10;
     background: rgba(8, 38, 42, 0.94);
+    -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
     color: white;
     border-bottom: 1px solid rgba(200, 240, 83, 0.22);
@@ -127,6 +132,44 @@ nav a::after {
 
 nav a:hover::after {
     width: 100%;
+}
+
+
+/* TOMBOL HAMBURGER (hanya tampil di HP) */
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    border: 1px solid rgba(200, 240, 83, 0.35);
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.hamburger span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: var(--aksen);
+    border-radius: 2px;
+    transition: transform 0.25s, opacity 0.25s;
+}
+
+.hamburger[aria-expanded="true"] span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.hamburger[aria-expanded="true"] span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger[aria-expanded="true"] span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
 }
 
 
@@ -257,10 +300,6 @@ main h2::before {
     gap: 24px;
 }
 
-.promo-dua {
-    grid-template-columns: repeat(2, 1fr);
-}
-
 
 /* PROMO */
 
@@ -341,53 +380,7 @@ main h2::before {
     color: var(--utama);
 }
 
-.promo .harga-promo {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    margin: 10px 0 6px;
-}
-
-.promo .harga-promo s {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.7);
-}
-
-.promo .harga-promo strong {
-    font-family: "Bricolage Grotesque", Arial, sans-serif;
-    font-size: 30px;
-    line-height: 1;
-    color: var(--aksen);
-}
-
-/* kartu promo dengan foto di kanan */
-.promo-foto-kanan {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-}
-
-.promo-foto-kanan .promo-isi {
-    flex: 1;
-    min-width: 0;
-    position: relative;
-    z-index: 1;
-}
-
-.promo-foto {
-    flex-shrink: 0;
-    width: 140px;
-    height: 170px;
-    object-fit: cover;
-    border-radius: 14px;
-    border: 3px solid rgba(255, 255, 255, 0.4);
-    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
-    position: relative;
-    z-index: 1;
-}
-
-/* kalau promo cuma satu, tampil melebar seperti banner */
+/* kalau promo cuma satu di dalam grid, tampil melebar seperti banner */
 .grid-3 .promo:only-child {
     grid-column: 1 / -1;
     padding: 24px 28px;
@@ -395,6 +388,147 @@ main h2::before {
 
 .grid-3 .promo:only-child h3 {
     font-size: 26px;
+}
+
+
+/* HARGA PROMO */
+
+.promo .harga-promo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 8px 0 10px;
+}
+
+.promo .harga-promo s {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.promo .harga-promo strong {
+    font-family: "Bricolage Grotesque", Arial, sans-serif;
+    font-size: 46px;
+    line-height: 1;
+    color: var(--aksen);
+}
+
+
+/* BARIS PROMO + CARA MEMESAN
+   poster 4:3 di kiri, langkah memesan ditumpuk di kanan,
+   jadi tidak ada ruang kosong di samping poster */
+
+.promo-baris {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 40px;
+    padding-top: 48px;
+}
+
+.promo-baris > section {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.promo-baris .grid-3 {
+    flex: 1;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(3, 1fr);
+}
+
+.promo-baris .langkah {
+    align-items: center;
+}
+
+
+/* POSTER PROMO 4:3
+   ukuran huruf memakai satuan cqw (mengikuti lebar poster),
+   jadi isinya ikut mengecil dan membesar bersama poster */
+
+.promo-foto-kanan {
+    container-type: inline-size;
+    aspect-ratio: 4 / 3;
+    display: flex;
+    align-items: center;
+    padding: 6%;
+}
+
+/* lingkaran besar di belakang foto */
+.promo-foto-kanan::before {
+    content: "";
+    position: absolute;
+    right: -14%;
+    top: 50%;
+    width: 62%;
+    aspect-ratio: 1;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    background: rgba(200, 240, 83, 0.16);
+    z-index: 0;
+}
+
+/* titik-titik dipindah ke pojok kiri bawah */
+.promo-foto-kanan::after {
+    right: auto;
+    left: 0;
+    top: auto;
+    bottom: 0;
+    -webkit-mask-image: linear-gradient(45deg, #000, transparent 70%);
+    mask-image: linear-gradient(45deg, #000, transparent 70%);
+}
+
+.promo-foto-kanan .promo-isi {
+    position: relative;
+    z-index: 2;
+    width: 56%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.promo-foto-kanan h3 {
+    margin-top: 3cqw;
+    font-size: 28px;
+    font-size: clamp(22px, 7cqw, 46px);
+    line-height: 1.05;
+}
+
+.promo-foto-kanan .harga-promo {
+    margin: 2.5cqw 0;
+}
+
+.promo-foto-kanan .harga-promo s {
+    font-size: 14px;
+    font-size: clamp(13px, 2.8cqw, 20px);
+}
+
+.promo-foto-kanan .harga-promo strong {
+    font-size: 40px;
+    font-size: clamp(34px, 10.5cqw, 68px);
+}
+
+.promo-foto-kanan .promo-isi p {
+    font-size: 13px;
+    font-size: clamp(12px, 2.5cqw, 17px);
+    margin: 0 0 3.5cqw;
+}
+
+.promo-foto-kanan .tombol {
+    font-size: 13px;
+    padding: 9px 20px;
+}
+
+.promo-foto {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 52%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 32%);
+    mask-image: linear-gradient(90deg, transparent 0, #000 32%);
 }
 
 
@@ -568,6 +702,7 @@ main h2::before {
     background: var(--koral);
 }
 
+
 /* FASILITAS */
 
 .fasilitas {
@@ -607,6 +742,7 @@ main h2::before {
     font-size: 13px;
     color: var(--teks-lembut);
 }
+
 
 /* AJAKAN */
 
@@ -762,6 +898,11 @@ footer {
 
 @media (max-width: 860px) {
 
+    .promo-baris {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+
     .hero .wadah {
         grid-template-columns: 1fr;
         padding-bottom: 56px;
@@ -775,13 +916,35 @@ footer {
         grid-template-columns: repeat(2, 1fr);
     }
 
+    /* urutan: judul, foto, teks, label */
     .tentang {
         grid-template-columns: 1fr;
-        gap: 24px;
+        gap: 16px;
+    }
+
+    .tentang-teks {
+        display: contents;
+    }
+
+    .tentang-teks h2 {
+        order: 1;
+        margin-bottom: 0;
     }
 
     .tentang-foto {
+        order: 2;
         height: 240px;
+    }
+
+    .tentang-teks p {
+        order: 3;
+        max-width: none;
+        margin-bottom: 0;
+    }
+
+    .tentang-poin {
+        order: 4;
+        margin-top: 0;
     }
 
     main > section.info {
@@ -806,15 +969,134 @@ footer {
 
 @media (max-width: 640px) {
 
+    /* menu navigasi jadi dropdown yang dibuka lewat tombol hamburger */
+    .hamburger {
+        display: flex;
+    }
+
     nav {
         display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        gap: 0;
+        padding: 6px 5% 14px;
+        background: rgba(8, 38, 42, 0.98);
+        border-bottom: 1px solid rgba(200, 240, 83, 0.22);
+    }
+
+    nav.terbuka {
+        display: flex;
+    }
+
+    nav a {
+        padding: 14px 4px;
+        font-size: 14px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    nav a::after {
+        display: none;
+    }
+
+    /* hero tetap persegi panjang (landscape) di HP */
+    .hero .wadah {
+        min-height: 240px;
+        padding-top: 32px;
+        padding-bottom: 32px;
+        gap: 0;
+    }
+
+    .hero h1 {
+        font-size: clamp(34px, 9vw, 52px);
+    }
+
+    .slogan {
+        font-size: 15px;
+        margin-top: 10px;
+    }
+
+    .alamat {
+        display: none;
+    }
+
+    .hero .tombol {
+        margin-top: 16px;
+    }
+
+    /* daftar menu tetap 2 x 2 di HP, kartu dibuat lebih ringkas */
+    .grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .menu {
+        display: flex;
+        flex-direction: column;
+        padding: 8px 8px 12px;
+    }
+
+    .menu .foto {
+        height: 110px;
+        margin-bottom: 10px;
+    }
+
+    .menu h3 {
+        font-size: 14px;
+    }
+
+    .harga {
+        align-self: flex-start;
+        font-size: 11px;
+        margin: 4px 0 10px;
+    }
+
+    .menu .tombol {
+        margin-top: auto;
+        padding: 10px 12px;
+        font-size: 12px;
+    }
+
+    /* tombol cukup besar untuk disentuh jari */
+    .tombol,
+    .menu .tombol,
+    .promo .tombol,
+    .promo-foto-kanan .tombol {
+        padding: 12px 20px;
+    }
+
+    main > section.ajakan {
+        padding: 24px 22px;
+    }
+
+    main > section.info {
+        padding: 18px 20px;
+    }
+
+    .footer-isi {
+        padding-top: 40px;
+        padding-bottom: 28px;
     }
 }
 
 @media (max-width: 480px) {
 
-    .grid-4 {
-        grid-template-columns: 1fr;
+    .promo-foto-kanan {
+        padding: 5%;
+    }
+
+    .promo-foto-kanan h3 {
+        font-size: clamp(19px, 7cqw, 46px);
+    }
+
+    .promo-foto-kanan .harga-promo strong {
+        font-size: clamp(28px, 10.5cqw, 68px);
+    }
+
+    .promo-foto-kanan .promo-isi p {
+        font-size: clamp(11px, 2.5cqw, 17px);
     }
 }
 
