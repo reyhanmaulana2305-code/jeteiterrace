@@ -52,19 +52,58 @@ function initNavbar() {
 }
 
 /* ============================================================
-   HALAMAN MENU: tombol "+ Tambah" menambah isi keranjang
+   HALAMAN MENU: tombol "+ Tambah", filter kategori, dan pencarian
    ============================================================ */
+
+/* Tebak kategori menu dari nama (makanan / minuman) */
+function kategoriItem(nama) {
+  const n = nama.toLowerCase();
+  const makanan = ['nasi', 'mie', 'ayam', 'kentang', 'lalapan', 'soto',
+    'goreng', 'katsu', 'telur', 'sambal', 'teriyaki', 'kriwil', 'kribo', 'ayam'];
+  return makanan.some(k => n.includes(k)) ? 'makanan' : 'minuman';
+}
+
 function initMenu() {
   const daftar = $('.daftar');
   if (!daftar) return;
 
+  const elJumlah = $('#jumlah-item');
+  const elTotal = $('#total-keranjang');
+  const inputCari = $('#cari');
+  const filterNav = $('.filter');
+
+  let kategori = 'semua';
+  let q = '';
+
   const perbaruiKeranjang = () => {
-    const elJumlah = $('#jumlah-item');
-    const elTotal = $('#total-keranjang');
     if (elJumlah) elJumlah.textContent = 'Keranjang: ' + totalItem() + ' item';
     if (elTotal) elTotal.textContent = rupiah(totalHarga());
   };
 
+  /* Tampilkan item sesuai kategori + kata kunci */
+  const terapkanFilter = () => {
+    let tampil = 0;
+    $$('.item', daftar).forEach(item => {
+      const nama = item.querySelector('h2')?.textContent.trim() || '';
+      const cocokKategori = kategori === 'semua' || kategoriItem(nama) === kategori;
+      const cocokCari = !q || nama.toLowerCase().includes(q);
+      const tampilkan = cocokKategori && cocokCari;
+      item.hidden = !tampilkan;
+      if (tampilkan) tampil += 1;
+    });
+
+    let pesan = $('#pesan-menu');
+    if (!pesan) {
+      pesan = document.createElement('p');
+      pesan.id = 'pesan-menu';
+      pesan.className = 'tidak-ada';
+      daftar.after(pesan);
+    }
+    pesan.hidden = tampil > 0;
+    pesan.textContent = 'Menu tidak ditemukan. Coba kata kunci lain.';
+  };
+
+  /* Tombol + Tambah */
   daftar.addEventListener('click', e => {
     const tombol = e.target.closest('.tombol');
     if (!tombol) return;
@@ -89,14 +128,37 @@ function initMenu() {
     }, 900);
   });
 
+  /* Filter kategori (pill) — cegah navigasi, filter di halaman */
+  if (filterNav) {
+    filterNav.addEventListener('click', e => {
+      const link = e.target.closest('a');
+      if (!link) return;
+      e.preventDefault();
+      kategori = link.dataset.cat
+        || (link.textContent.trim().toLowerCase() === 'makanan' ? 'makanan'
+          : link.textContent.trim().toLowerCase() === 'minuman' ? 'minuman' : 'semua');
+      $$('a', filterNav).forEach(a => a.classList.toggle('aktif', a === link));
+      terapkanFilter();
+    });
+  }
+
+  /* Kotak pencarian */
+  if (inputCari) {
+    inputCari.addEventListener('input', e => {
+      q = e.target.value.trim().toLowerCase();
+      terapkanFilter();
+    });
+  }
+
   perbaruiKeranjang();
+  terapkanFilter();
 }
 
 /* ============================================================
    HALAMAN PESANAN
    ============================================================ */
 function initPesanan() {
-  const tabel = $('.tabel');
+  const tabel = $('.tabel') || $('table');
   const btnKirim = $('#kirimPesanan');
   if (!tabel || !btnKirim) return;
 
@@ -105,25 +167,47 @@ function initPesanan() {
   const qrHasil = $('#qrHasil');
   const nama = $('#nama');
   const alertBox = $('.alert');
-  const tidakAda = $('#tidak-ada');
 
-  /* ---- Render ulang tabel dari keranjang ---- */
-  function render() {
-    const keranjang = getKeranjang();
-    const list = Object.values(keranjang);
+  /* Baca item langsung dari baris tabel (DOM) */
+  function bacaItems() {
+    return $$('tbody tr', tabel).map(tr => {
+      const nilaiEl = $('.qta-nilai', tr);
+      if (!nilaiEl) return null;
+      const selNama = $('td:nth-child(2)', tr);
+      return {
+        nama: (selNama?.textContent || '').trim(),
+        qty: Number(nilaiEl.textContent) || 0,
+        harga: Number(tr.dataset.harga) || 0,
+      };
+    }).filter(Boolean);
+  }
 
-    if (list.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--abu);padding:22px">Keranjang kosong. <a href="menu.html" style="color:var(--utama);font-weight:700">Pilih menu</a> dulu.</td></tr>';
-      elTotal.textContent = 'Total: ' + rupiah(0);
-      btnKirim.disabled = true;
-      if (tidakAda) tidakAda.hidden = false;
-      qrHasil.hidden = true;
-      return;
-    }
+  /* Hitung ulang subtotal tiap baris + total + nomor urut */
+  function perbaruiTotal() {
+    let total = 0;
+    let urut = 0;
+    $$('tbody tr', tabel).forEach(tr => {
+      const nilaiEl = $('.qta-nilai', tr);
+      if (!nilaiEl) return;
+      urut += 1;
+      const noEl = $('td:first-child', tr);
+      if (noEl) noEl.textContent = urut;
 
-    if (tidakAda) tidakAda.hidden = true;
-    btnKirim.disabled = false;
+      const harga = Number(tr.dataset.harga) || 0;
+      const qty = Number(nilaiEl.textContent) || 0;
+      const subtotal = harga * qty;
+      const sel = $('.angka', tr);
+      if (sel) sel.textContent = rupiah(subtotal);
+      total += subtotal;
+    });
+    if (elTotal) elTotal.textContent = 'Total: ' + rupiah(total);
+    return total;
+  }
 
+  /* Jika keranjang berisi, bangun ulang tabel dari keranjang */
+  function renderDariKeranjang() {
+    const list = Object.values(getKeranjang()).filter(q => q.qty > 0);
+    if (list.length === 0) return false;
     tbody.innerHTML = list.map((q, i) => `
       <tr data-harga="${q.harga}" data-nama="${q.nama}">
         <td>${i + 1}</td>
@@ -138,104 +222,107 @@ function initPesanan() {
         <td class="angka">${rupiah(q.harga * q.qty)}</td>
       </tr>
     `).join('');
-
     perbaruiTotal();
+    return true;
   }
 
-  /* ---- Hitung ulang subtotal & total ---- */
-  function perbaruiTotal() {
-    let total = 0;
-    $$('tbody tr', tabel).forEach(tr => {
-      const harga = Number(tr.dataset.harga) || 0;
-      const nilaiEl = $('.qta-nilai', tr);
-      if (!nilaiEl) return;
-      const qty = Number(nilaiEl.textContent) || 0;
-      const subtotal = harga * qty;
-      const sel = $('.angka', tr);
-      if (sel) sel.textContent = rupiah(subtotal);
-      total += subtotal;
-    });
-    elTotal.textContent = 'Total: ' + rupiah(total);
+  /* Tampilkan keadaan kosong bila tak ada baris sama sekali */
+  function cekKosong() {
+    const adaBaris = $$('tbody tr', tabel).some(tr => $('.qta-nilai', tr));
+    if (!adaBaris) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--abu);padding:22px">Keranjang kosong. <a href="menu.html" style="color:var(--utama);font-weight:700">Pilih menu</a> dulu.</td></tr>';
+      if (elTotal) elTotal.textContent = 'Total: ' + rupiah(0);
+      btnKirim.disabled = true;
+      if (qrHasil) qrHasil.hidden = true;
+    } else {
+      btnKirim.disabled = false;
+    }
   }
 
-  /* ---- Kontrol + / − (juga simpan ke keranjang) ---- */
+  /* ---- Kontrol + / − ---- */
   tabel.addEventListener('click', e => {
     const btn = e.target.closest('.qta');
     if (!btn) return;
     const tr = btn.closest('tr');
     const nilaiEl = $('.qta-nilai', tr);
+    if (!nilaiEl) return;
+
     let qty = Number(nilaiEl.textContent) || 0;
     if (btn.classList.contains('tambah')) qty += 1;
     if (btn.classList.contains('kurang')) qty = Math.max(0, qty - 1);
-    nilaiEl.textContent = qty;
 
-    // sinkron ke storage
+    // sinkron ke keranjang bila baris berasal dari keranjang
     const namaItem = tr.dataset.nama;
-    const keranjang = getKeranjang();
-    if (keranjang[namaItem]) {
-      if (qty <= 0) delete keranjang[namaItem];
-      else keranjang[namaItem].qty = qty;
-      setKeranjang(keranjang);
+    if (namaItem) {
+      const keranjang = getKeranjang();
+      if (keranjang[namaItem]) {
+        if (qty <= 0) delete keranjang[namaItem];
+        else keranjang[namaItem].qty = qty;
+        setKeranjang(keranjang);
+      }
     }
-    perbaruiTotal();
 
-    // jika semua nol, render ulang (kosong)
-    if (totalItem() === 0) render();
+    // jumlah 0 -> hapus baris (nama item otomatis hilang)
+    if (qty <= 0) {
+      tr.remove();
+      perbaruiTotal();
+      cekKosong();
+      return;
+    }
+
+    nilaiEl.textContent = qty;
+    perbaruiTotal();
   });
 
-  /* ---- Kirim Pesanan -> tampilkan QR ---- */
+  /* ---- Kirim Pesanan ---- */
   btnKirim.addEventListener('click', () => {
-    const list = Object.values(getKeranjang()).filter(q => q.qty > 0);
-    if (list.length === 0) { render(); return; }
+    const list = bacaItems().filter(i => i.qty > 0);
+    if (list.length === 0) { cekKosong(); return; }
 
-    // validasi nama
     if (!nama.value.trim()) {
       alertBox.hidden = false;
       nama.classList.add('invalid');
       nama.focus();
-      qrHasil.hidden = true;
+      if (qrHasil) qrHasil.hidden = true;
       return;
     }
     alertBox.hidden = true;
     nama.classList.remove('invalid');
 
-    const total = list.reduce((t, q) => t + q.harga * q.qty, 0);
+    const total = list.reduce((t, i) => t + i.harga * i.qty, 0);
     const no = antrianBerikutnya();
 
     const data = {
       antrian: no,
       nama: nama.value.trim(),
       catatan: $('#catatan').value.trim(),
-      items: list.map(q => ({ nama: q.nama, qty: q.qty, harga: q.harga })),
+      items: list.map(i => ({ nama: i.nama, qty: i.qty, harga: i.harga })),
       total,
       waktu: new Date().toISOString(),
     };
     simpan(KEY.terkirim, data);
 
-    // teks ringkas + QR
     $('#qrAntrian').textContent = no;
     $('#qrData').textContent =
-      `${no} · ${data.nama} · ${list.map(q => q.nama + ' x' + q.qty).join(', ')} · ${rupiah(total)}`;
+      `${no} · ${data.nama} · ${list.map(i => i.nama + ' x' + i.qty).join(', ')} · ${rupiah(total)}`;
 
     const box = $('#qrcode');
     box.innerHTML = '';
     if (typeof QRCode !== 'undefined') {
       new QRCode(box, {
         text: JSON.stringify(data),
-        width: 180,
-        height: 180,
-        colorDark: '#0e3b3a',
-        colorLight: '#ffffff',
+        width: 180, height: 180,
+        colorDark: '#0e3b3a', colorLight: '#ffffff',
         correctLevel: QRCode.CorrectLevel.M,
       });
     } else {
       box.textContent = 'QR tidak tersedia (periksa koneksi internet).';
     }
 
-    qrHasil.hidden = false;
-    qrHasil.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-    // kosongkan keranjang setelah terkirim
+    if (qrHasil) {
+      qrHasil.hidden = false;
+      qrHasil.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
     localStorage.removeItem(KEY.keranjang);
   });
 
@@ -245,7 +332,10 @@ function initPesanan() {
     if (nama.value.trim()) { alertBox.hidden = true; nama.classList.remove('invalid'); }
   });
 
-  render();
+  /* ---- Inisialisasi ---- */
+  renderDariKeranjang(); // jika ada isi keranjang, tampilkan
+  cekKosong();           // jika tetap kosong, tampilkan pesan
+  perbaruiTotal();
 }
 
 /* ============================================================
