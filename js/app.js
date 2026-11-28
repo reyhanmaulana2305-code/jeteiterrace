@@ -44,10 +44,24 @@ function initNavbar() {
   const tombol = $('#tombol-menu');
   const nav = $('#menu-nav');
   if (!tombol || !nav) return;
+
+  const tutup = () => {
+    tombol.setAttribute('aria-expanded', 'false');
+    nav.classList.remove('terbuka');
+  };
+
   tombol.addEventListener('click', () => {
     const terbuka = tombol.getAttribute('aria-expanded') === 'true';
     tombol.setAttribute('aria-expanded', String(!terbuka));
     nav.classList.toggle('terbuka', !terbuka);
+  });
+
+  // Tutup otomatis saat salah satu link dipilih
+  $$('a', nav).forEach(a => a.addEventListener('click', tutup));
+
+  // Tutup saat klik di luar menu
+  document.addEventListener('click', e => {
+    if (!nav.contains(e.target) && !tombol.contains(e.target)) tutup();
   });
 }
 
