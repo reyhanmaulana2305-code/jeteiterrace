@@ -885,6 +885,13 @@ footer {
     flex-shrink: 0;
 }
 
+/* Link lokasi (Google Maps) tampil di baris sendiri di bawah alamat */
+.ig.maps {
+    display: flex;
+    margin-top: 8px;
+    font-size: 14px;
+}
+
 .info .ig:hover {
     color: var(--koral);
 }
