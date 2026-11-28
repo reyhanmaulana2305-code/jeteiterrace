@@ -413,10 +413,6 @@ main h2::before {
 }
 
 
-/* BARIS PROMO + CARA MEMESAN
-   poster 4:3 di kiri, langkah memesan ditumpuk di kanan,
-   jadi tidak ada ruang kosong di samping poster */
-
 .promo-baris {
     display: grid;
     grid-template-columns: 1.15fr 1fr;
